@@ -20,5 +20,6 @@ Simple gaze tracking in python that uses an gradient-based algorithm by Timm & B
 ## Timm & Barth's Eye Center Localization Algorithm
 Paper:
 Timm, F., & Barth, E. (2011, March). Accurate Eye Centre Localisation by Means of Gradients. In *VISAPP* (pp. 125-130).
+http://www.inb.uni-luebeck.de/publikationen/pdfs/TiBa11b.pdf
 Demo:	
 https://www.youtube.com/watch?v=aGmGyFLQAFM
