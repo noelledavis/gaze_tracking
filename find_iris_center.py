@@ -28,15 +28,15 @@ for file_name in file_names:
 
 	# compute x-gradient
 	sobel_x = cv2.Sobel(img, cv2.CV_16S, 1, 0, ksize = 3)
-	sobel_x = cv2.normalize(sobel_x, sobel_x, 0.0, 255.0, cv2.NORM_MINMAX, cv2.CV_8U)
+	sobel_x = cv2.normalize(sobel_x, sobel_x, -127.0, 127.0, cv2.NORM_MINMAX, cv2.CV_8S)
 	cv2.imshow('sobelx', sobel_x)
 
 	# compute y-gradient
 	sobel_y = cv2.Sobel(img, cv2.CV_16S, 0, 1, ksize = 3)
-	sobel_y = cv2.normalize(sobel_y, sobel_y, 0.0, 255.0, cv2.NORM_MINMAX, cv2.CV_8U)
+	sobel_y = cv2.normalize(sobel_y, sobel_y, -127.0, 127.0, cv2.NORM_MINMAX, cv2.CV_8S)
 	cv2.imshow('sobely', sobel_y)
 
-	print sobel_y[0]
+	
 
 	# make matrix of gradient vectors
 	# for row in len(img):
