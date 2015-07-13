@@ -1,5 +1,5 @@
 # gaze_tracking
-Simple gaze tracking in python that uses an gradient-based algorithm by Timm & Barth to locate iris centers
+Simple gaze tracking in Python that uses an gradient-based algorithm by Timm & Barth to locate iris centers
 
 ## Algorithm
 1. Localize centers of irises.
