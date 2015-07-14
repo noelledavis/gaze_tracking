@@ -36,7 +36,7 @@ for file_name in file_names:
 	img = cv2.imread(file_name, 0)
 
 	# resize image
-	img = resize(img, 5)
+	img = resize(img, 20)
 	h, w = img.shape
 
 	# compute x-gradient
@@ -77,20 +77,13 @@ for file_name in file_names:
 		
 		dot_sum = 0
 
-		print "------NEW CENTER", (center_r, center_c), "------"
-
 		for (grad_r, grad_c) in np.ndindex(h, w):
 
 			disp = normalize(grad_r - center_r, grad_c - center_c)
 
 			dot = disp[0] * grad_y[grad_r, grad_c] + disp[1] * grad_x[grad_r, grad_c]
 			
-			# print results
-			print 'grad_r:', grad_r, 'grad_c:', grad_c, 'disp:', round(disp[0], 1), ',', round(disp[1], 1), '\t', 'dot:', round(dot, 1)
-			
 			dot_sum += dot
-		
-		print dot_sum
 		
 		if dot_sum > max_dot_sum:
 			max_dot_sum = dot_sum
@@ -98,7 +91,11 @@ for file_name in file_names:
 
 	print 'center:', center
 
-	print 'span', timeit.default_timer() - start
+	print 'elapsed time:', timeit.default_timer() - start
+
+	cv2.circle(img, tuple(center), 1, 255, -1)
+
+	cv2.imshow('img', img)
 
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
