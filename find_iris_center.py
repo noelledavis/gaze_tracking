@@ -2,8 +2,12 @@
 # Find iris center from eye image.
 
 from __future__ import division
+import math
 import cv2
 import numpy as np
+from numpy import linalg as LA
+import itertools
+import timeit # for testing
 
 # resize image
 def resize(img, new_width = 500):
@@ -16,6 +20,14 @@ def resize(img, new_width = 500):
     img = cv2.resize(img, dim, interpolation = cv2.INTER_LINEAR)
     return img
 
+# calculate magnitude of 2-D vector
+def normalize(x, y, threshold = 0):
+	mag = math.sqrt(x ** 2 + y ** 2)
+	if mag > 0:
+		return [x / mag, y / mag]
+	else:
+		return [0, 0]
+
 file_names = ['control.jpg']
 
 for file_name in file_names:
@@ -24,27 +36,69 @@ for file_name in file_names:
 	img = cv2.imread(file_name, 0)
 
 	# resize image
-	img = resize(img, 300)
+	img = resize(img, 5)
+	h, w = img.shape
 
 	# compute x-gradient
 	sobel_x = cv2.Sobel(img, cv2.CV_16S, 1, 0, ksize = 3)
 	sobel_x = cv2.normalize(sobel_x, sobel_x, -127.0, 127.0, cv2.NORM_MINMAX, cv2.CV_8S)
-	cv2.imshow('sobelx', sobel_x)
+	# cv2.imshow('sobelx', sobel_x)
 
 	# compute y-gradient
 	sobel_y = cv2.Sobel(img, cv2.CV_16S, 0, 1, ksize = 3)
 	sobel_y = cv2.normalize(sobel_y, sobel_y, -127.0, 127.0, cv2.NORM_MINMAX, cv2.CV_8S)
-	cv2.imshow('sobely', sobel_y)
+	# cv2.imshow('sobely', sobel_y)
 
-	
+	start = timeit.default_timer()
 
-	# make matrix of gradient vectors
-	# for row in len(img):
+	# normalize and threshold gradient vectors
+	grad_x = []
+	grad_y = []
+
+	for (x_row, y_row) in itertools.izip(sobel_x, sobel_y): # using itertools is marginally faster than looping through indices
+
+		for (x, y) in itertools.izip(x_row, y_row):
+
+			# normalize gradient vector
+			norm = normalize(x, y, threshold = 0)
+
+			grad_x.append(norm[0])
+			grad_y.append(norm[1])
+
+	grad_x = np.reshape(np.array(grad_x, dtype = np.float16), (-1, w))
+	grad_y = np.reshape(np.array(grad_y, dtype = np.float16), (-1, w))
+
+	grad = np.dstack((grad_x, grad_y))
+
+	# find center
+	max_dot_sum = -1
+
+	for (center_r, center_c) in np.ndindex(h, w):
 		
+		dot_sum = 0
+
+		print "------NEW CENTER", (center_r, center_c), "------"
+
+		for (grad_r, grad_c) in np.ndindex(h, w):
+
+			disp = normalize(grad_r - center_r, grad_c - center_c)
+
+			dot = disp[0] * grad_y[grad_r, grad_c] + disp[1] * grad_x[grad_r, grad_c]
+			
+			# print results
+			print 'grad_r:', grad_r, 'grad_c:', grad_c, 'disp:', round(disp[0], 1), ',', round(disp[1], 1), '\t', 'dot:', round(dot, 1)
+			
+			dot_sum += dot
+		
+		print dot_sum
+		
+		if dot_sum > max_dot_sum:
+			max_dot_sum = dot_sum
+			center = [center_r, center_c]
+
+	print 'center:', center
+
+	print 'span', timeit.default_timer() - start
 
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
-
-	# for row in img:
-	# 	for c in row:
-	# 		for 
