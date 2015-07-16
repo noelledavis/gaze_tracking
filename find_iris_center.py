@@ -28,7 +28,7 @@ def normalize(x, y, threshold = 0):
 	else:
 		return [0, 0]
 
-file_names = ['control.jpg']
+file_names = ['eye0.jpg']
 
 for file_name in file_names:
 
@@ -87,7 +87,7 @@ for file_name in file_names:
 		
 		if dot_sum > max_dot_sum:
 			max_dot_sum = dot_sum
-			center = [center_r, center_c]
+			center = [center_c, center_r]
 
 	print 'center:', center
 
